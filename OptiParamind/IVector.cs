@@ -11,4 +11,8 @@ public class Vector : List<double>, IVector
     public Vector(IEnumerable<double> collection) : base(collection)
     {
     }
+    
+    public Vector(int dimension) : base(dimension)
+    {
+    }
 }
