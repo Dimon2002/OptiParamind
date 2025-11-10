@@ -62,6 +62,7 @@ public class PiecewiseLinearParametricFunction : IParametricFunction
             return values[segmentIndex] + _slopes[segmentIndex] * (x - knots[segmentIndex]);
         }
 
+        // TODO: По параметрам...
         public IVector Gradient(IVector point)
         {
             var x = point[0];
