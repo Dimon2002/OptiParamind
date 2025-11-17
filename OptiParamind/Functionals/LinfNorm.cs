@@ -16,8 +16,8 @@ public class LInfNorm : IFunctional
     public double Value(IFunction function)
     {
         return _nodes
-            .Select((t, index) => function.Value(t) - _y[index])
+            .Select((t, index) => double.Abs(function.Value(t) - _y[index]))
             .Prepend(0)
-            .Max(double.Abs);
+            .Max();
     }
 }

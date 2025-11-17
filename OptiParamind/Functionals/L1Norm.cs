@@ -6,7 +6,7 @@ public class L1Norm : IDifferentiableFunctional
 {
     private readonly IReadOnlyList<IVector> _nodes;
     private readonly IVector _y;
-
+ 
     public L1Norm(IReadOnlyList<IVector> nodes, IFunction originalFunction)
     {
         _nodes = nodes;

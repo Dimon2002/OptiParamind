@@ -1,47 +1,45 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using OptiParamind;
+﻿using OptiParamind.Functionals;
 using OptiParamind.Functions;
+using OptiParamind.Optimizators;
 
-Console.WriteLine("Hello, World!");
+namespace OptiParamind.Examples;
 
-var parameters = new Vector([1, 2, 3]);
-Console.WriteLine("=== Linear Parametric Function Test ===");
-var function = new LinearParametricFunction()
-    .Bind(parameters);
-
-if (function is not IDifferentiableFunction differentiableFunction)
+public class Program
 {
-    throw new ArgumentException("Function is not a differentiable function");
-}
+    private static void Main()
+    {
+        var optimizer = new SimulatedAnnealing();
 
-IVector point = new Vector([7, 2]);
+        Console.WriteLine();
+        Console.Write("Введите количество переменных: ");
+        var numVariables = int.Parse(Console.ReadLine()!);
+        var initial = new Vector(new double[numVariables + 1]);
+        
+        Console.WriteLine();
+        Console.Write("Введите количество точек: ");
+        var n = int.Parse(Console.ReadLine()!);
 
-var value = differentiableFunction.Value(point);
-var gradient = differentiableFunction.Gradient(point);
+        var nodes = new List<IVector>();
+        Console.WriteLine($"Введите {n} x точек ");
 
-Console.WriteLine($"parameters: {string.Join(",", parameters)} | x: ({string.Join(";", point)}) | f(x): {value}");
-Console.WriteLine($"parameters: {string.Join(",", parameters)} | x: ({string.Join(";", point)}) | grad = ({string.Join(";", gradient)})");
+        for (var i = 0; i < n; i++)
+        {
+            Console.Write($"Точка {i + 1}: ");
+            var str = Console.ReadLine()!.Split();
+            var point = new Vector(str.Select(double.Parse).ToArray());
+            nodes.Add(point);
+        }
 
-Console.WriteLine();
-Console.WriteLine("=== Polynomial Parametric Function Test ===");
+        var fun = new PolynomialParametricFunction();
+        var functinal = new L2Norm(nodes, fun.Bind(new Vector([1, 2, 1])));
 
-function = new PolynomialParametricFunction().Bind(parameters);
-value = function.Value(point);
+        var res = optimizer.Minimize(functinal, fun, initial);
+        Console.WriteLine("Найденные коэффициенты: ");
+        for (var i = 0; i < res.Count; i++)
+        {
+            Console.WriteLine($"w{i} = {res[i]:F3} ");
+        }
 
-Console.WriteLine($"parameters: {string.Join(",", parameters)} | x: ({string.Join(";", point)}) | f(x): {value}");
-
-Console.WriteLine();
-Console.WriteLine("=== Quadratic Bezier Function Test ===");
-parameters = [0, 1, 0];
-
-function = new QuadraticBezierParametricFunction()
-    .Bind(parameters);
-
-double[] testPoints = [0, 0.5, 1];
-
-foreach (var x in testPoints)
-{
-    value = function.Value(new Vector { x });
-    Console.WriteLine($"control points: {string.Join(",", parameters)} | x = {x,4:F1} | f(x) = {value:F4}");
+        Console.WriteLine();
+    }
 }
